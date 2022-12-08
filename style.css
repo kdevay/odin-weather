@@ -1,0 +1,88 @@
+body {
+    background-color: rgb(147, 184, 172);
+}
+h1 {
+    font-size: 40px;
+}
+h2 {
+    font-size: 35px;
+}
+p {
+    margin: 0;
+    padding: 0;
+}
+.rowBox {
+    display: flex;
+}
+.colBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.loBox,
+.hiBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(239 215 124);
+    height: 55px;
+    width: 55px;
+    justify-content: center;
+    border-radius: 29px;
+}
+.hiBox {
+    margin: 20px;
+}
+.loBox {
+    margin: 20px;
+}
+.main {
+    font-size: 40px;
+    margin: 25px 0;
+}
+.bold {
+    font-weight: 800;
+}
+#icon {
+    /* margin: 10px 0; */
+}
+#description {
+    font-size: 25px;
+    padding: 0px;
+    font-style: italic;
+    margin: 37px 20px;
+}
+#relly {
+    position: relative;
+    top: -30px;
+    font-size: 20px;
+    margin-left: 201px;
+}
+#feels {
+    letter-spacing: 4px;
+    font-style: italic;
+    margin: 0 10px 0 95px;
+}
+#feelsLike {
+    letter-spacing: 1px;
+    margin: 0;
+}
+.spacey {
+    letter-spacing: 4px;
+    font-style: italic;
+}
+.rellyBox {
+    position: relative;
+    top: -45px;
+    margin-left: 93px;
+}
+.rellyHiLo {
+    position: relative;
+    top: -107px;
+}
+.rellyRowBox {
+    display: flex;
+    position: relative;
+    top: -193px;
+    margin-left: 80px;
+}
