@@ -32,8 +32,9 @@ p {
     padding-left: 20px;
 }
 .content {
+    display: none;
     padding-left: 20px;
-    display: grid;
+    /* display: grid; */
     grid-template: 1fr/ 1fr 140px 1fr;
 }
 .left {
@@ -57,14 +58,15 @@ p {
     gap: 30px;
 }
 #location {
-    margin: 25px 0;
+    margin: 55px 0 20px 0;
     padding: 0;
-    height: 53.5px;
+    height: 47px;
 }
 
 /* mid */
 #icon {
-    /* margin: 10px 0; */
+    width: 150px;
+    height: 150px;
 }
 .loBox,
 .hiBox {
@@ -75,13 +77,12 @@ p {
     width: 55px;
     justify-content: center;
     border-radius: 29px;
+    margin: 0 0 20px;
 }
 .hiBox {
-    margin: 20px;
     background-color: rgb(239 165 92);
 }
 .loBox {
-    margin: 20px;
     background-color: rgb(239 215 124);
 }
 .bold {
@@ -91,13 +92,13 @@ p {
 /* right */
 .main {
     font-size: 40px;
-    margin: 25px 0;
+    margin: 55px 0 20px 0;
 }
 #description {
     font-size: 25px;
     padding: 0px;
     font-style: italic;
-    margin: 37px 20px;
+    margin: 67px 20px 0;
 }
 #feels {
     letter-spacing: 4px;

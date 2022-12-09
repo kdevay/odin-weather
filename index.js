@@ -1,3 +1,4 @@
+// All US states and their abbreviations
 const states = [
     ['alabama', 'AL'],
     ['alaska', 'AK'],
@@ -51,6 +52,7 @@ const states = [
     ['wyoming', 'WY'] 
 ];
 
+// Custom descriptions based on weather code
 const weatherCodes = {
     200: 'thunderstorm and light rain',
     230: 'thunderstorm and light rain',
@@ -109,11 +111,12 @@ const weatherCodes = {
     804: 'overcast'
 };
 
+// Imperial and metric units
 const units = {
     pressure: {
         mercury: 'inHG',
     },
-    imp: {
+    imperial: {
         speed: 'mph',
         temp: 'F',
     },
@@ -123,6 +126,7 @@ const units = {
     },
 };
 
+// An object for assigning cardinal direction based on wind angle
 const windDirection = { 
     NE: {num: 0, names: ['north', 'NNE', 'NE', 'ENE', 'east']},
     ES: {num: 90, names: ['east', 'ESE', 'SE', 'SSE', 'south']},
@@ -157,25 +161,15 @@ const windDirection = {
     }
 };
 
-function findState(string){
-    string = string.toLowerCase();
-    for (let i = 0; i < 50; i++){
-        if (string === states[i][0]){
-            return states[i][1];
-        }
-    }
-    return false;
-}
-
-function findDescription(id) {
-    return weatherCodes[id];
-}
+// Dom elements
+const content = document.getElementById('content');
 const heading = document.getElementById('location');
 const errMessage = document.getElementById('error');
 const search = document.getElementById('search');
 const city = document.getElementById('city');
 const state = document.getElementById('state');
 const country = document.getElementById('country');
+const unit = document.getElementById('units');
 const icon = document.getElementById('icon');
 const weather = [
     document.getElementById('description'), 
@@ -191,108 +185,147 @@ const weather = [
     document.getElementById('pUnit')
 ];
 
+// API call URL's and icon URL
+const urls = {
+    geo: [
+        'http://api.openweathermap.org/geo/1.0/direct?q=', 
+        '&limit=1&appid=d0a94ad4220c8e5634a0b81bf7e35a30'
+    ],
+    weather: [
+    'https://api.openweathermap.org/data/2.5/weather?lat=',
+    '&lon=', 
+    '&appid=d0a94ad4220c8e5634a0b81bf7e35a30&units='
+    ],
+    icon: [
+        'http://openweathermap.org/img/wn/', 
+        '@2x.png'
+    ],
+    getUrl(input, char){
+        console.log('char: ', char);
+        if (char === 'w'){
+            console.log('input: ', input);
+            return(this.weather[0] + input[0] + this.weather[1] + input[1] + 
+            this.weather[2] + unit.value);
+        } else if (char === 'l'){
+            return(this.geo[0] + input + this.geo[1]);
+        } else {
+            return(this.icon[0] + input + this.icon[1]);
+        }
+    }
+};
+
+// Searches states array for UI state name
+function findState(string){
+    string = string.toLowerCase();
+    for (let i = 0; i < 50; i++){
+        if (string === states[i][0]){
+            return states[i][1];
+        }
+    }
+    return false;
+}
+
+// Finds weather description based on weather code
+function findDescription(id) {
+    return weatherCodes[id];
+}
+
+// Clears previous user inputs from DOM
 function clearDisplay(element) {
     element.textContent = ''
 }
+
+// Clear all content from page
 weather.forEach(clearDisplay);
 clearDisplay(errMessage);
 icon.style.display = 'none'
-
-const urls = {
-    geo: {start: 'http://api.openweathermap.org/geo/1.0/direct?q=', end: '&limit=1&appid=d0a94ad4220c8e5634a0b81bf7e35a30'},
-    weather: {start: 'https://api.openweathermap.org/data/2.5/weather?lat=', mid: '&lon=', end:'&appid=d0a94ad4220c8e5634a0b81bf7e35a30&units=imperial'},
-    icon: {start: 'http://openweathermap.org/img/wn/', end: '@2x.png'}
-};
 
 async function getWeather() {
     weather.forEach(clearDisplay);
     clearDisplay(errMessage);
     try {
         // Format user inputs
-        let stateCode, displayLocation, searchTerm, tempName;
+        let stateCode, displayLocation, searchNames, tempName;
+        const type = unit.value;
         const cityName = !city.value ? '' : city.value.replaceAll(' ', '_');
         const stateName = !state.value ? '' : state.value.replaceAll(' ', '_');
         const countryName = country.value;
-        // Require country name
-        if (!countryName){
-            errMessage.textContent = 'Country name required.'
+        
+        if (!unit.value) { // Require imperial/metric units
+            errMessage.textContent = 'Error: Units required.';
             return;
-        // If searching US, find state code for URL
+        } else if (!countryName){ // Require country name
+            errMessage.textContent = 'Error: Country name required.';
+            return;
         } else if (countryName === 'US' && stateName !== '') {
+            // If searching US, find state code for URL
             stateCode = findState(stateName);
             if (!stateCode){
-                errMessage.textContent = 'No results were found for this state name: "' + stateName + '".';
+                errMessage.textContent = 'No results were found for this state name: "' + stateName + '"';
                 return;
             }
-            searchTerm = cityName + ',' + stateCode + ',' + countryName ;
-        // If searching outside of US use state name in URL
+            searchNames = cityName + ',' + stateCode + ',' + countryName ;
+        } else if (countryName === 'US' && stateName === '' && cityName !== '') {
+            // If searching US, require state name
+            errMessage.textContent = 'Error: State name required.';
+            return;
         } else {
-            searchTerm = cityName + ',' + stateName + ',' + countryName;
+            // If searching outside of US use state name in URL
+            searchNames = cityName + ',' + stateName + ',' + countryName;
         }
 
         // Find location's latitude / longitude
-        const geoResponse = await fetch( urls.geo.start + searchTerm + urls.geo.end, {mode: 'cors'})
-        const geoData = await geoResponse.json()
-        const lat = geoData[0].lat;
-        const lon = geoData[0].lon;
+        const urlLL = urls.getUrl(searchNames, 'l');
+        const geoResponse = await fetch(urlLL, {mode: 'cors'})
+        const geoData = await geoResponse.json();
+        const latLon = [geoData[0].lat, geoData[0].lon];
 
         // Find location's weather
-        const response = await fetch(urls.weather.start + lat + urls.weather.mid + lon + urls.weather.end, {mode: 'cors'})
-        const data = await response.json()
+        const urlW = urls.getUrl(latLon, 'w');
+        const response = await fetch(urlW, {mode: 'cors'});
+        const data = await response.json();
 
         // Add weather data to display
         weather[0].textContent = findDescription(data.weather[0].id); // description
         weather[1].textContent = Math.round(data.wind.speed) + ' '; // wind speed
         weather[3].textContent = data.main.humidity + '%'; // humidity
-        weather[5].textContent = Math.round(data.main.temp) + '°' + units.imp.temp;
-        weather[6].textContent = Math.round(data.main.feels_like) + '°';
-        weather[7].textContent = Math.round(data.main.temp_max) + '°';
-        weather[8].textContent = Math.round(data.main.temp_min) + '°';
-        weather[9].textContent = units.imp.speed;
-        weather[10].textContent = units.pressure.mercury;
-        
+        weather[5].textContent = Math.round(data.main.temp) + '°' + units[type].temp; // current temp
+        weather[6].textContent = Math.round(data.main.feels_like) + '°'; // feels like
+        weather[7].textContent = Math.round(data.main.temp_max) + '°'; // high
+        weather[8].textContent = Math.round(data.main.temp_min) + '°'; // low
+        weather[9].textContent = units[type].speed; // wind speed units
+        weather[10].textContent = units.pressure.mercury; // barometric pressure units
+        console.log('poopy');
         // If wind speed is 0 hide wind direction
         if (data.wind.speed === '0'){ 
             weather[2].style.display = 'none'; 
         } else { // Display wind direction
             weather[2].textContent = windDirection.findQuadrant(data.wind.deg);
         }
-        
-        // Convert air pressure from millibar to inHG
+        console.log('pee');
+        // Convert barometric pressure from millibar to inHG
         let airPress = Math.round(data.main.pressure / 33.864);
         weather[4].textContent = airPress + ' ';
 
         // Display weather icon
-        let imgSrc = urls.icon.start + data.weather[0].icon  + urls.icon.end;
+        let imgSrc = urls.getUrl(data.weather[0].icon); // UNICORN
         icon.src = imgSrc;
         icon.style.display = 'block';
 
         // Display location name
         tempName = document.getElementById(countryName).textContent;
-        if (cityName === '' && stateName === ''){
-            displayLocation = tempName;
-        } else if (cityName !== '' && stateName !== '') {
+        if (cityName !== '' && stateName !== '') {
             displayLocation = cityName.replaceAll('_', ' ') + ', ' + stateName;
         } else if (cityName !== '' && stateName === ''){
             displayLocation = cityName.replaceAll('_', ' ') + ', ' + tempName;
-        } else if (cityName === '' && stateName !== ''){
-            displayLocation = stateName.replaceAll('_', ' ') + ', ' + tempName;
         }
         heading.textContent = displayLocation;
+        content.style.display = 'grid';
 
     } catch {
+        content.style.display = 'none';
         errMessage.textContent = "No results were found for these search terms."
     }
 }
 
 search.addEventListener('click', getWeather);
-// API key:
-// d0a94ad4220c8e5634a0b81bf7e35a30
-// geocode API:
-// http://api.openweathermap.org/geo/1.0/direct?q=' + city + ',' + state + ',' + country + '&limit=1&appid=d0a94ad4220c8e5634a0b81bf7e35a30
-// weather API:
-// https://api.openweathermap.org/data/2.5/weather?lat=29.950793lon=-90.075713&appid=d0a94ad4220c8e5634a0b81bf7e35a30&units=imperial
-// icon url format: 
-// 'http://openweathermap.org/img/wn/' + data.weather.icon + '@2x.png'
-// https://api.openweathermap.org/data/2.5/weather?lat=-33.8698439&lon=151.2082848&appid=d0a94ad4220c8e5634a0b81bf7e35a30&units=imperial
-// lat":,"lon":151.2082848,

@@ -263,13 +263,18 @@
             <option id="ZM" value="ZM">Zambia</option>
             <option id="ZW" value="ZW">Zimbabwe</option>
         </select>
+        <select id="units" name="units" placeholder="units">
+            <option value="">choose units (required)</option>
+            <option value="metric">metric</option>
+            <option value="imperial">imperial</option>
+        </select>
         <input id="city" type="text" placeholder="city">
         <input id="state" type="text" placeholder="state">
         <button id="search">search</button>
         <h2 id="error"></h2>
     </div>
     
-    <div class="content">
+    <div id="content" class="content">
         <div class="left">
             <h2 id="location"></h2>
             <div class="rowBox">
