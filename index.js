@@ -223,7 +223,11 @@ const urls = {
 function findState(string){
     string = string.toLowerCase();
     for (let i = 0; i < 50; i++){
-        if (string === states[i][0]){
+        if (string === states[i][0]) {
+            // If string matches state name
+            return states[i][1];
+        } else if (string === states[i][1].toLowerCase()) {
+            // If string matches state abbreviation
             return states[i][1];
         }
     }
@@ -258,7 +262,6 @@ function addStyle(icon, code) {
     return;
 }
 
-
 // Clears previous user inputs from DOM
 function clearDisplay(element) {
     element.textContent = ''
@@ -274,8 +277,8 @@ async function getWeather() {
     weather.forEach(clearDisplay);
     clearDisplay(errMessage);
     try {
-        // Display throbber
-        throbDiv.style.display = 'flex';
+        content.style.display = 'none'; // Hide content
+        throbDiv.style.display = 'flex'; // Display throbber
 
         // Format user inputs
         let stateCode, displayLocation, searchNames, tempName;
@@ -353,16 +356,17 @@ async function getWeather() {
 
         // Display location name
         tempName = document.getElementById(countryName).textContent;
-        if (cityName !== '' && stateName !== '') {
-            displayLocation = cityName.replaceAll('_', ' ') + ', ' + stateName;
-        } else if (cityName !== '' && stateName === ''){
+        if (stateName !== '') { // If location is in the US
+            displayLocation = cityName.replaceAll('_', ' ') + ', ' + stateCode;
+        } else if (cityName !== '' && stateName === ''){ // If location outside US
             displayLocation = cityName.replaceAll('_', ' ') + ', ' + tempName;
         }
         heading.textContent = displayLocation;
         content.style.display = 'grid';
 
     } catch {
-        content.style.display = 'none';
+        throbDiv.style.display = 'none'; // Hide throbber
+        content.style.display = 'none'; // Hide content
         errMessage.textContent = "No results were found for these search terms."
     }
 }

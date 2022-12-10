@@ -114,7 +114,14 @@ button {
     margin: 0;
 }
 #load {
+    height: 200px;
     width: 100%;
     display: none;
+    justify-content: center;
+    align-items: center;
     /* display: flex */
+}
+#throbber {
+    height: 100px;
+    width: 100px;
 }
