@@ -345,7 +345,10 @@ async function getWeather() {
         // Find location's weather
         const urlW = urls.getUrl(latLon, 'w');
         const response = await fetch(urlW, {mode: 'cors'});
-        const data = await response.json();
+        // const data = await response.json();
+        let data = await response
+        console.log('res: ', data)
+        data = data.json()
 
         // Hide throbber
         throbDiv.style.display = 'none';
