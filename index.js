@@ -172,6 +172,8 @@ const country = document.getElementById('country');
 const unit = document.getElementById('units');
 const icon = document.getElementById('icon');
 const throbDiv = document.getElementById('load');
+const loc1 = document.getElementById('loc1');
+const loc2 = document.getElementById('loc2');
 const weather = [
     document.getElementById('description'), 
     document.getElementById('windSpeed'), 
@@ -224,7 +226,6 @@ const urls = {
 // Searches states array for UI state name
 function findState(string){
     string = string.toLowerCase();
-    console.log(string)
     for (let i = 0; i < 50; i++){
 
         if (string === states[i][0]) {
@@ -268,7 +269,7 @@ function addStyle(icon, code) {
 
 // Ensure proper names are capitalized correctly
 function properCaps(string) {
-    console.log(string);
+    string = string.toLowerCase();
     let stringArray = string.split('');
     stringArray[0] = stringArray[0].toUpperCase();
     for (let i = 0; i < stringArray.length; i++) {
@@ -276,7 +277,6 @@ function properCaps(string) {
         stringArray[i + 1] = stringArray[i + 1].toUpperCase();
         }
     }
-    console.log('stringJoin', stringArray.join(''));
     return stringArray.join('');
 };
 
@@ -299,7 +299,7 @@ async function getWeather() {
         throbDiv.style.display = 'flex'; // Display throbber
 
         // Format user inputs
-        let stateCode, displayLocation, searchNames, tempName;
+        let stateCode, head1, searchNames;
         const type = unit.value;
         const cityName = !city.value ? '' : city.value;
         const stateName = !state.value ? '' : state.value;
@@ -319,24 +319,21 @@ async function getWeather() {
                 throbDiv.style.display = 'none'; // Hide throbber
                 return;
             }
-            console.log('fart');
             // find state code for URL
             stateCode = findState(stateName);
-            console.log('poot');
             if (!stateCode) { // If state code not found
                 errMessage.textContent = 'No results were found for this state name: "' + stateName + '"';
                 throbDiv.style.display = 'none'; // Hide throbber
                 return;
             } 
             searchNames = cityName.replaceAll(' ', '_') + ',' + stateCode + ',' + countryName ;
-            console.log('peepee');
             // Ensure cityName is formatted properly
-            displayLocation = properCaps(cityName);
+            head1 = properCaps(cityName);
             
         } else {
             // If searching outside of US use state name in URL
             searchNames = cityName.replaceAll(' ', '_') + ',' + stateName + ',' + countryName;
-            displayLocation = cityName;
+            head1 = cityName;
         }
 
         // Find location's latitude / longitude
@@ -384,13 +381,14 @@ async function getWeather() {
         addStyle(data.weather[0].icon, data.weather[0].id);
 
         // Display location name
-        tempName = document.getElementById(countryName).textContent;
-        if (stateName !== '') { // If location is in the US
-            displayLocation = displayLocation + ', ' + stateCode;
-        } else if (cityName !== '' && stateName === ''){ // If location outside US
-            displayLocation = displayLocation + ', ' + tempName;
+        loc1.textContent = head1 + ',';
+        if (stateName !== '') { 
+            // If location is in the US, format 'City, State'
+            loc2.textContent = stateCode;
+        } else { 
+            // If location outside US, format 'City, Country'
+            loc2.textContent = document.getElementById(countryName).textContent;
         }
-        heading.textContent = displayLocation;
         content.style.display = 'grid';
 
     } catch {

@@ -69,7 +69,8 @@ button {
     align-items: flex-start;
     gap: 30px;
 }
-#location {
+#loc1,
+#loc2 {
     margin: 0;
     padding: 0;
     height: 47px;
