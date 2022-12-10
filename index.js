@@ -28,26 +28,26 @@ const states = [
     ['montana', 'MT'],
     ['nebraska', 'NE'],
     ['nevada', 'NV'],
-    ['new Hampshire', 'NH'],
-    ['new Jersey', 'NJ'],
-    ['new Mexico', 'NM'],
-    ['new York', 'NY'],
-    ['north Carolina', 'NC'],
-    ['north Dakota', 'ND'],
+    ['new hampshire', 'NH'],
+    ['new jersey', 'NJ'],
+    ['new mexico', 'NM'],
+    ['new york', 'NY'],
+    ['north carolina', 'NC'],
+    ['north dakota', 'ND'],
     ['ohio', 'OH'],
     ['oklahoma', 'OK'],
     ['oregon', 'OR'],
     ['pennsylvania', 'PA'],
-    ['rhode Island', 'RI'],
-    ['south Carolina', 'SC'],
-    ['south Dakota', 'SD'],
+    ['rhode island', 'RI'],
+    ['south carolina', 'SC'],
+    ['south dakota', 'SD'],
     ['tennessee', 'TN'],
     ['texas', 'TX'],
     ['utah', 'UT'],
     ['vermont', 'VT'],
     ['virginia', 'VA'],
     ['washington', 'WA'],
-    ['west Virginia', 'WV'],
+    ['west virginia', 'WV'],
     ['wisconsin', 'WI'],
     ['wyoming', 'WY'] 
 ];
@@ -289,19 +289,23 @@ async function getWeather() {
         
         if (!unit.value) { // Require imperial/metric units
             errMessage.textContent = 'Error: Units required.';
+            throbDiv.style.display = 'none'; // Hide throbber
             return;
         } else if (!countryName){ // Require country name
             errMessage.textContent = 'Error: Country name required.';
+            throbDiv.style.display = 'none'; // Hide throbber
             return;
         } else if (countryName === 'US') { // If searching US,
             if (stateName === '') { // require state name
                 errMessage.textContent = 'Error: State name required.';
+                throbDiv.style.display = 'none'; // Hide throbber
                 return;
             }
             // find state code for URL
             stateCode = findState(stateName);
             if (!stateCode) { // If state code not found
                 errMessage.textContent = 'No results were found for this state name: "' + stateName + '"';
+                throbDiv.style.display = 'none'; // Hide throbber
                 return;
             } 
             searchNames = cityName + ',' + stateCode + ',' + countryName ;
