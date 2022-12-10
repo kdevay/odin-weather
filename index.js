@@ -66,14 +66,14 @@ const weatherCodes = {
     221: 'heavy thunderstorm', 
     313: 'heavy rain and scattered showers',
     314: 'heavy rain and scattered showers',
-    300: 'drizzle',
+    300: 'drizzle', 
     301: 'drizzle',
     302: 'rain',
     310: 'light rain',
     311: 'drizzle ',
     312: 'rain',
     321: 'rain',
-    500: 'light rain',
+    500: 'light rain', 
     520: 'light rain',
     521: 'rain',
     501: 'moderate rain',
@@ -83,7 +83,7 @@ const weatherCodes = {
     503: 'very heavy rain',
     504: 'extreme rain',
     511: 'freezing rain',
-    601: 'snow',
+    601: 'snow', 
     621: 'snow',
     600: 'light snow',
     620: 'light snow',
@@ -184,6 +184,12 @@ const weather = [
     document.getElementById('wUnit'),
     document.getElementById('pUnit')
 ];
+// If searching in US, display state input
+country.addEventListener('change', function(e) {
+    if (e.target.value === 'US') {
+        state.style.display = 'block';
+    }
+});
 
 // API call URL's and icon URL
 const urls = {
@@ -230,6 +236,30 @@ function findDescription(id) {
     return weatherCodes[id];
 }
 
+// Changes color scheme based on weather/ day/night
+function addStyle(icon, code) {
+    let brightCodes = [800, 801, 802, 601, 621, 600, 620, 615, 612, 500, 520];
+    let isBlue = brightCodes.includes(code);
+    let guide = icon.slice(-1);
+    let hiBox = document.getElementById('hiBox');
+    let loBox = document.getElementById('loBox');
+    // set body color
+    if (guide === 'n') { // nighttime body & hiBox / loBox
+        document.body.style.backgroundColor = '#8c8195';
+        hiBox.style.backgroundColor = '#98aaaf';
+        loBox.style.backgroundColor = '#c4d1d5';
+        return;
+    } else if (guide === 'd'  && isBlue) { // sunny/daytime body  
+        document.body.style.backgroundColor = '#93b8ac';
+    } else { // cloudy body 
+        document.body.style.backgroundColor = '#779188';
+    }
+    hiBox.style.backgroundColor = '#efa55c';
+    loBox.style.backgroundColor = '#efd77c';
+    return;
+}
+
+
 // Clears previous user inputs from DOM
 function clearDisplay(element) {
     element.textContent = ''
@@ -238,7 +268,8 @@ function clearDisplay(element) {
 // Clear all content from page
 weather.forEach(clearDisplay);
 clearDisplay(errMessage);
-icon.style.display = 'none'
+icon.style.display = 'none';
+state.style.display = 'none';
 
 async function getWeather() {
     weather.forEach(clearDisplay);
@@ -257,18 +288,18 @@ async function getWeather() {
         } else if (!countryName){ // Require country name
             errMessage.textContent = 'Error: Country name required.';
             return;
-        } else if (countryName === 'US' && stateName !== '') {
-            // If searching US, find state code for URL
-            stateCode = findState(stateName);
-            if (!stateCode){
-                errMessage.textContent = 'No results were found for this state name: "' + stateName + '"';
+        } else if (countryName === 'US') { // If searching US,
+            if (stateName === '') { // require state name
+                errMessage.textContent = 'Error: State name required.';
                 return;
             }
+            // find state code for URL
+            stateCode = findState(stateName);
+            if (!stateCode) { // If state code not found
+                errMessage.textContent = 'No results were found for this state name: "' + stateName + '"';
+                return;
+            } 
             searchNames = cityName + ',' + stateCode + ',' + countryName ;
-        } else if (countryName === 'US' && stateName === '' && cityName !== '') {
-            // If searching US, require state name
-            errMessage.textContent = 'Error: State name required.';
-            return;
         } else {
             // If searching outside of US use state name in URL
             searchNames = cityName + ',' + stateName + ',' + countryName;
@@ -311,6 +342,9 @@ async function getWeather() {
         let imgSrc = urls.getUrl(data.weather[0].icon); // UNICORN
         icon.src = imgSrc;
         icon.style.display = 'block';
+
+        // Change style to match weather
+        addStyle(data.weather[0].icon, data.weather[0].id);
 
         // Display location name
         tempName = document.getElementById(countryName).textContent;

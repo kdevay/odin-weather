@@ -1,6 +1,6 @@
 /* global styles */
-body {
-    background-color: rgb(147, 184, 172);
+body { 
+    background-color: #93b8ac;
 }
 h1 {
     font-size: 40px;
@@ -11,6 +11,11 @@ h2 {
 p {
     margin: 0;
     padding: 0;
+}
+select, 
+input,
+button {
+    margin: 0 5px;
 }
 
 /* general styles */
@@ -80,10 +85,10 @@ p {
     margin: 0 0 20px;
 }
 .hiBox {
-    background-color: rgb(239 165 92);
+    background-color: #efa55c;
 }
 .loBox {
-    background-color: rgb(239 215 124);
+    background-color: #efd77c;
 }
 .bold {
     font-weight: 800;
