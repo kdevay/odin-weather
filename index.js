@@ -326,31 +326,30 @@ async function getWeather() {
                 throbDiv.style.display = 'none'; // Hide throbber
                 return;
             } 
-            searchNames = cityName.replaceAll(' ', '_') + ',' + stateCode + ',' + countryName ;
+            searchNames = cityName.replaceAll(' ', '_') + ',' + stateCode + ',' + countryName.replaceAll(' ', '_');
             // Ensure cityName is formatted properly
             head1 = properCaps(cityName);
             
         } else {
-            // If searching outside of US use state name in URL
-            searchNames = cityName.replaceAll(' ', '_') + ',' + stateName + ',' + countryName;
+            // If searching outside of US, exclude state in URL
+            searchNames = cityName.replaceAll(' ', '_') + ',' + ',' + countryName;
             head1 = cityName;
         }
 
         // Find location's latitude / longitude
         const urlLL = urls.getUrl(searchNames, 'l');
         const geoResponse = await fetch(urlLL, {mode: 'cors'})
-        // const geoData = await geoResponse.json();
-        let geoData = await geoResponse;
-        geoData = geoData.json()
+        const geoData = await geoResponse.json();
+        // let geoData = await geoResponse;
+        // geoData = geoData.json()
         const latLon = [geoData[0].lat, geoData[0].lon];
 
         // Find location's weather
         const urlW = urls.getUrl(latLon, 'w');
         const response = await fetch(urlW, {mode: 'cors'});
-        // const data = await response.json();
-        let data = await response
-        console.log('res: ', data)
-        data = data.json()
+        const data = await response.json();
+        // let data = await response
+        // data = data.json()
 
         // Hide throbber
         throbDiv.style.display = 'none';
@@ -392,7 +391,7 @@ async function getWeather() {
             loc2.textContent = stateCode;
         } else { 
             // If location outside US, format 'City, Country'
-            loc2.textContent = document.getElementById(countryName).textContent;
+            loc2.textContent = countryName;
         }
         content.style.display = 'grid';
 
