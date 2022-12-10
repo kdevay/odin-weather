@@ -113,3 +113,8 @@ button {
     letter-spacing: 1px;
     margin: 0;
 }
+#load {
+    width: 100%;
+    display: none;
+    /* display: flex */
+}

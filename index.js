@@ -171,6 +171,7 @@ const state = document.getElementById('state');
 const country = document.getElementById('country');
 const unit = document.getElementById('units');
 const icon = document.getElementById('icon');
+const throbDiv = document.getElementById('load');
 const weather = [
     document.getElementById('description'), 
     document.getElementById('windSpeed'), 
@@ -207,14 +208,12 @@ const urls = {
         '@2x.png'
     ],
     getUrl(input, char){
-        console.log('char: ', char);
-        if (char === 'w'){
-            console.log('input: ', input);
+        if (char === 'w'){ // Weather url
             return(this.weather[0] + input[0] + this.weather[1] + input[1] + 
             this.weather[2] + unit.value);
-        } else if (char === 'l'){
+        } else if (char === 'l'){ // Geocode url
             return(this.geo[0] + input + this.geo[1]);
-        } else {
+        } else { // Icon url
             return(this.icon[0] + input + this.icon[1]);
         }
     }
@@ -275,6 +274,9 @@ async function getWeather() {
     weather.forEach(clearDisplay);
     clearDisplay(errMessage);
     try {
+        // Display throbber
+        throbDiv.style.display = 'flex';
+
         // Format user inputs
         let stateCode, displayLocation, searchNames, tempName;
         const type = unit.value;
@@ -316,6 +318,9 @@ async function getWeather() {
         const response = await fetch(urlW, {mode: 'cors'});
         const data = await response.json();
 
+        // Hide throbber
+        throbDiv.style.display = 'none';
+
         // Add weather data to display
         weather[0].textContent = findDescription(data.weather[0].id); // description
         weather[1].textContent = Math.round(data.wind.speed) + ' '; // wind speed
@@ -326,14 +331,14 @@ async function getWeather() {
         weather[8].textContent = Math.round(data.main.temp_min) + '°'; // low
         weather[9].textContent = units[type].speed; // wind speed units
         weather[10].textContent = units.pressure.mercury; // barometric pressure units
-        console.log('poopy');
+
         // If wind speed is 0 hide wind direction
         if (data.wind.speed === '0'){ 
             weather[2].style.display = 'none'; 
         } else { // Display wind direction
             weather[2].textContent = windDirection.findQuadrant(data.wind.deg);
         }
-        console.log('pee');
+
         // Convert barometric pressure from millibar to inHG
         let airPress = Math.round(data.main.pressure / 33.864);
         weather[4].textContent = airPress + ' ';
