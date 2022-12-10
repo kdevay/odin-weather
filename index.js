@@ -195,7 +195,7 @@ country.addEventListener('change', function(e) {
 // API call URL's and icon URL
 const urls = {
     geo: [
-        'http://api.openweathermap.org/geo/1.0/direct?q=', 
+        'https://api.openweathermap.org/geo/1.0/direct?q=', 
         '&limit=1&appid=d0a94ad4220c8e5634a0b81bf7e35a30'
     ],
     weather: [
@@ -204,7 +204,7 @@ const urls = {
     '&appid=d0a94ad4220c8e5634a0b81bf7e35a30&units='
     ],
     icon: [
-        'http://openweathermap.org/img/wn/', 
+        'https://openweathermap.org/img/wn/', 
         '@2x.png'
     ],
     getUrl(input, char){
