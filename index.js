@@ -339,7 +339,9 @@ async function getWeather() {
         // Find location's latitude / longitude
         const urlLL = urls.getUrl(searchNames, 'l');
         const geoResponse = await fetch(urlLL, {mode: 'cors'})
-        const geoData = await geoResponse.json();
+        // const geoData = await geoResponse.json();
+        let geoData = await geoResponse;
+        geoData = geoData.json()
         const latLon = [geoData[0].lat, geoData[0].lon];
 
         // Find location's weather
